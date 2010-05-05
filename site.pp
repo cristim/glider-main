@@ -13,17 +13,18 @@ class utcluj_grid_common{
         enabled => "0"
     }
     
-    config_site{utcluj:
-    site_name => "RO-09-UTCN",
-    site_email => "admin@grid.utcluj.ro",
-    site_domain => "mosigrid.utcluj.ro",
-    vos=> ["seegrid", "ops", "gridmosi.ici.ro", "ops.vo.egee-see.org", "env.see-grid-sci.eu", "dteam", "see"],
-    apel_passwd => "hackme",
-    mysql_passwd => "hackme",
-    lfc_passwd => "hackme",
-    dpm_passwd => "hackme",
-    dpm_info_passwd => "hackme",
-    wn_count => "20",
+    config_site{"RO-09-UTCN":
+        site_name => "RO-09-UTCN",
+        site_email => "admin@grid.utcluj.ro",
+        site_domain => "mosigrid.utcluj.ro",
+        vos=> ["seegrid", "ops", "gridmosi.ici.ro", "ops.vo.egee-see.org", "env.see-grid-sci.eu", "dteam", "see"],
+        apel_passwd => "hackme",
+        mysql_passwd => "hackme",
+        lfc_passwd => "hackme",
+        dpm_passwd => "hackme",
+        cream_passwd => "hackme",
+        dpm_info_passwd => "hackme",
+        wn_count => "2",
     }
 }
 
@@ -49,14 +50,19 @@ glider_netinstall{netinstaller:
 
 node /^ce\d+/ {
     include utcluj_grid_common
-    glite_node{ce:
+    glite_node{"ce":
         node_type => ["creamCE", "BDII_site", "TORQUE_utils", "TORQUE_server", "MPI_CE"],
-        yum_repos => ["lcg-CA", "glite-CREAM", "glite-BDII", "glite-TORQUE_utils", "glite-TORQUE_server", "glite-MPI_utils"],
+        yum_repos => ["lcg-CA", "glite-CREAM", "glite-BDII", "glite-TORQUE_utils", 
+                     "glite-TORQUE_server", "glite-MPI_utils"],
+        inst_cert => "true"
     }
-        package{["openmpi-libs", "mpich", "glite-yaim-mpi", "mpiexec", "openmpi", "glite-MPI_utils", "glite-TORQUE_server", "glite-TORQUE_utils", "glite-CREAM"]:
-                require => Repos["lcg-CA", "glite-CREAM", "glite-TORQUE_server", "glite-TORQUE_utils", "glite-MPI_utils"],
-                ensure => installed,
-            }
+    package{["openmpi-libs", "mpich", "glite-yaim-mpi", "mpiexec", 
+            "openmpi", "glite-MPI_utils", "glite-TORQUE_server", 
+            "glite-TORQUE_utils", "glite-CREAM", "glite-BDII"]:
+        require => Repos["lcg-CA", "glite-CREAM", "glite-TORQUE_server", 
+           "glite-TORQUE_utils", "glite-MPI_utils", "glite-BDII"],
+        ensure => installed,
+    }
 }
 
 
@@ -100,10 +106,11 @@ node /^wn\d+/ {
         yum_repos => ["lcg-CA", "glite-WN", "glite-TORQUE_client", "glite-MPI_utils"],
         install_yum_groups => ["glite-WN"], 
     }
-        package{["openmpi-libs", "mpich", "glite-yaim-mpi", "mpiexec", "openmpi", "glite-MPI_utils", "glite-TORQUE_client"]:
-                require => Repos["lcg-CA", "glite-WN", "glite-TORQUE_client", "glite-MPI_utils"],
-                ensure => installed,
-            }
+    package{["openmpi-libs", "mpich", "glite-yaim-mpi", "mpiexec", "openmpi", 
+            "glite-MPI_utils", "glite-TORQUE_client"]:
+        require => Repos["lcg-CA", "glite-WN", "glite-TORQUE_client", "glite-MPI_utils"],
+        ensure => installed,
+    }
 }
 
 
