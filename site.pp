@@ -3,10 +3,10 @@ class utcluj_grid_common{
     include glider_common
     import "glider-glite"
     package{["screen", "mc"]: ensure => installed}
-    repos{["rpmforge", "scl", "gridmosi", "HellasGrid"]:}
+    repos{["lcg-CA", "rpmforge", "scl", "gridmosi", "HellasGrid"]:}
     package{["lcg-CA", "seegrid", "GridAUTH-vomscert", "IRB-vomscert", "GridMOSI-vomscert", "ca_GridMOSI"]:
         ensure => latest,
-        require => Repos["rpmforge", "scl", "gridmosi", "HellasGrid"]
+        require => Repos["rpmforge", "scl", "gridmosi", "HellasGrid", "lcg-CA"]
     }
     
     yumrepo{"epel":
@@ -52,35 +52,56 @@ node /^ce\d+/ {
     include utcluj_grid_common
     glite_node{"ce":
         node_type => ["creamCE", "BDII_site", "TORQUE_utils", "TORQUE_server", "MPI_CE"],
-        yum_repos => ["lcg-CA", "glite-CREAM", "glite-BDII", "glite-TORQUE_utils", 
+        yum_repos => ["glite-CREAM", "glite-BDII", "glite-TORQUE_utils", 
                      "glite-TORQUE_server", "glite-MPI_utils"],
         inst_cert => "true"
     }
     package{["openmpi-libs", "mpich", "glite-yaim-mpi", "mpiexec", 
             "openmpi", "glite-MPI_utils", "glite-TORQUE_server", 
             "glite-TORQUE_utils", "glite-CREAM", "glite-BDII"]:
-        require => Repos["lcg-CA", "glite-CREAM", "glite-TORQUE_server", 
+        require => Repos["glite-CREAM", "glite-TORQUE_server", 
            "glite-TORQUE_utils", "glite-MPI_utils", "glite-BDII"],
         ensure => installed,
     }
 }
 
-
-
-
 node /^se\d+/ {
     include utcluj_grid_common
     glite_node{se:
-        node_type => "SE_dpm_mysql",
-        yum_repos => ["lcg-CA", "glite-SE_dpm_mysql"]
+        node_type => ["SE_dpm_mysql"],
+        yum_repos => ["glite-SE_dpm_mysql"],
+        inst_cert => "true",
+    }
+    package{"glite-SE_dpm_mysql",
+        require => Repos["glite-SE_dpm_mysql"],
+        ensure => installed,
     }
 }
+
+node /^lfc\d+/ {
+    include utcluj_grid_common
+    glite_node{lfc:
+        node_type => "LFC_mysql",
+        yum_repos => ["glite-LFC_mysql"],
+        inst_cert => "true",
+    }
+    package{"glite-MON",
+        require => Repos["glite-MON"],
+        ensure => installed,
+    }
+}
+
 
 node /^mon\d+/ {
     include utcluj_grid_common
     glite_node{mon:
-        node_type => "MON",
-        yum_repos => ["lcg-CA", "glite-MON"]
+        node_type => ["MON"],
+        yum_repos => ["glite-MON"],
+        inst_cert => "true",
+    }
+    package{"glite-MON",
+        require => Repos["glite-MON"],
+        ensure => installed,
     }
 }
 
@@ -88,14 +109,11 @@ node /^ui\d+/ {
     include utcluj_grid_common
     glite_node{ui:
         node_type => "UI",
-        yum_repos => ["lcg-CA", "glite-UI"]
+        yum_repos => ["glite-UI"]
     }
-}
-node /^lfc\d+/ {
-    include utcluj_grid_common
-    glite_node{lfc:
-        node_type => "LFC_mysql",
-        yum_repos => ["lcg-CA", "glite-LFC_mysql"]
+    package{"glite-UI",
+        require => Repos["glite-UI"],
+        ensure => installed,
     }
 }
 
