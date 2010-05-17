@@ -72,7 +72,7 @@ node /^se\d+/ {
         yum_repos => ["glite-SE_dpm_mysql"],
         inst_cert => "true",
     }
-    package{"glite-SE_dpm_mysql",
+    package{"glite-SE_dpm_mysql":
         require => Repos["glite-SE_dpm_mysql"],
         ensure => installed,
     }
@@ -85,7 +85,7 @@ node /^lfc\d+/ {
         yum_repos => ["glite-LFC_mysql"],
         inst_cert => "true",
     }
-    package{"glite-MON",
+    package{"glite-MON":
         require => Repos["glite-MON"],
         ensure => installed,
     }
@@ -99,7 +99,7 @@ node /^mon\d+/ {
         yum_repos => ["glite-MON"],
         inst_cert => "true",
     }
-    package{"glite-MON",
+    package{"glite-MON":
         require => Repos["glite-MON"],
         ensure => installed,
     }
@@ -111,7 +111,7 @@ node /^ui\d+/ {
         node_type => "UI",
         yum_repos => ["glite-UI"]
     }
-    package{"glite-UI",
+    package{"glite-UI":
         require => Repos["glite-UI"],
         ensure => installed,
     }
@@ -121,12 +121,14 @@ node /^wn\d+/ {
     include utcluj_grid_common
     glite_node{wn:
         node_type => ["WN","TORQUE_client", "MPI_WN"],
-        yum_repos => ["lcg-CA", "glite-WN", "glite-TORQUE_client", "glite-MPI_utils"],
+        yum_repos => ["glite-WN", "glite-TORQUE_client", "glite-MPI_utils"],
         install_yum_groups => ["glite-WN"], 
     }
     package{["openmpi-libs", "mpich", "glite-yaim-mpi", "mpiexec", "openmpi", 
             "glite-MPI_utils", "glite-TORQUE_client"]:
-        require => Repos["lcg-CA", "glite-WN", "glite-TORQUE_client", "glite-MPI_utils"],
+        require => [Repos["glite-WN", "glite-TORQUE_client", "glite-MPI_utils"], 
+            Install_yum_groups["glite-WN"]],    # gLite groups must be installed before other 
+                                                # gLite packages, otherwise conflicts may occur
         ensure => installed,
     }
 }

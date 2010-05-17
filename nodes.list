@@ -1,3 +1,3 @@
 # each line should contain a hostname, IP and  MAC triplet, separated by spaces or tabs
 
-ce01.mosigrid.utcluj.ro 	192.168.56.103 		08:00:27:4e:3a:af
+wn01.mosigrid.utcluj.ro 	192.168.56.103 		08:00:27:4e:3a:af
